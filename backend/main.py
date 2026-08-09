@@ -5,12 +5,16 @@ import tempfile
 import os
 import shutil
 import uvicorn
+import logging
 
 from services.pdf_service import extract_text_from_pdf
 from services.classifier_service import classify_document
+from services.ai_classifier_service import classify_document_ai
 from services.storage_service import save_document
 
 app = FastAPI(title="AI Document Organizer API")
+
+AI_CONFIDENCE_THRESHOLD = 0.70
 
 app.add_middleware(
     CORSMiddleware,
@@ -38,7 +42,23 @@ async def upload_document(file: UploadFile = File(...)):
         text = extract_text_from_pdf(temp_path)
         
         # 4. Classify document
-        category, confidence = classify_document(text)
+        classification_method = "keyword_fallback"
+        category = "Other"
+        confidence = 0.0
+        
+        try:
+            # Try AI first
+            ai_category, ai_confidence = classify_document_ai(text)
+            if ai_confidence >= AI_CONFIDENCE_THRESHOLD:
+                category = ai_category
+                confidence = ai_confidence
+                classification_method = "ai"
+            else:
+                # Fallback to keyword if confidence is low
+                category, confidence = classify_document(text)
+        except Exception as e:
+            logging.warning(f"AI classifier failed, falling back to keyword classifier. Error: {e}")
+            category, confidence = classify_document(text)
         
         # 5. Move to correct folder
         saved_path = save_document(temp_path, file.filename, category)
@@ -48,6 +68,7 @@ async def upload_document(file: UploadFile = File(...)):
             "filename": file.filename,
             "category": category,
             "confidence": confidence,
+            "classification_method": classification_method,
             "path": saved_path
         })
         

@@ -98,6 +98,10 @@ function App() {
                 <span className="value">{(result.confidence * 100).toFixed(0)}%</span>
               </div>
               <div className="result-item">
+                <span className="label">Method:</span>
+                <span className="value">{result.classification_method === 'ai' ? 'AI' : 'Keyword fallback'}</span>
+              </div>
+              <div className="result-item">
                 <span className="label">Saved to:</span>
                 <span className="value path-value">{result.path}</span>
               </div>

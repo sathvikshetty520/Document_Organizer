@@ -5,7 +5,7 @@ A local document organization system. This application allows users to upload PD
 ## Features
 - **Local PDF Processing**: Uses `PyMuPDF` for fast text extraction from standard PDFs.
 - **OCR Fallback**: Uses CPU-optimized `PaddleOCR` to extract text from scanned documents or images within PDFs.
-- **Heuristic Categorization**: A lightweight keyword scoring algorithm automatically determines the best category for the document (designed to be easily swapped with an ML/AI model in future iterations).
+- **AI & Heuristic Categorization**: Uses a local AI model (TF-IDF + Cosine Similarity) via `scikit-learn` for intelligent document classification, with a lightweight keyword scoring algorithm as a fallback.
 - **Auto-Organization**: Automatically creates missing folders and securely moves/renames documents to prevent data loss or overwriting.
 - **Modern UI**: A beautiful, premium dark-mode React frontend with glassmorphism aesthetics.
 - **FastAPI Backend**: A highly concurrent, well-structured Python backend.
@@ -17,7 +17,8 @@ project_root/
 │   ├── main.py                 # FastAPI application
 │   ├── requirements.txt        # Python dependencies
 │   ├── services/
-│   │   ├── classifier_service.py # Categorization logic
+│   │   ├── ai_classifier_service.py # AI categorization logic
+│   │   ├── classifier_service.py # Fallback categorization logic
 │   │   ├── ocr_service.py        # PaddleOCR integration
 │   │   ├── pdf_service.py        # PyMuPDF integration
 │   │   └── storage_service.py    # File system management
