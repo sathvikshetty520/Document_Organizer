@@ -35,19 +35,21 @@ project_root/
 ## Setup Instructions
 
 ### 1. Backend API
-Open a command prompt (`cmd`) and run the following to start the FastAPI server:
+Open a command prompt (`cmd`) and run the following to install dependencies and start the FastAPI server:
 
 ```cmd
 cd backend
+.\venv\Scripts\pip.exe install -r requirements.txt
 .\venv\Scripts\python.exe main.py
 ```
 *(The API will be available at `http://localhost:8000`, and interactive docs at `http://localhost:8000/docs`)*
 
 ### 2. Frontend UI
-Open a separate command prompt (`cmd`) and run the following to start the React development server:
+Open a separate command prompt (`cmd`) and run the following to install dependencies and start the React development server:
 
 ```cmd
 cd frontend
+npm install
 npm run dev
 ```
 *(The web interface will be available at `http://localhost:5173`)*
