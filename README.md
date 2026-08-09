@@ -59,3 +59,4 @@ npm run dev
 - Implement vector search / RAG for conversational queries against your documents.
 - Add user authentication.
 - Dockerize the entire application for easier deployment.
+- Integrate a local AI document summarizer.
