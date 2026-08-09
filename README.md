@@ -1,11 +1,11 @@
-# AI Document Organizer
+# Smart Document Organizer
 
-A local AI-powered document organization system. This application allows users to upload PDF documents, automatically extracts and analyzes the text, and sorts them into appropriate folders (e.g., Academic, Bills, Financial, etc.) based on keyword heuristics.
+A local document organization system. This application allows users to upload PDF documents, automatically extracts text (using AI-based OCR when necessary), and sorts them into appropriate folders (e.g., Academic, Bills, Financial, etc.) based on keyword heuristics.
 
 ## Features
 - **Local PDF Processing**: Uses `PyMuPDF` for fast text extraction from standard PDFs.
 - **OCR Fallback**: Uses CPU-optimized `PaddleOCR` to extract text from scanned documents or images within PDFs.
-- **Smart Categorization**: A lightweight keyword scoring algorithm automatically determines the best category for the document.
+- **Heuristic Categorization**: A lightweight keyword scoring algorithm automatically determines the best category for the document (designed to be easily swapped with an ML/AI model in future iterations).
 - **Auto-Organization**: Automatically creates missing folders and securely moves/renames documents to prevent data loss or overwriting.
 - **Modern UI**: A beautiful, premium dark-mode React frontend with glassmorphism aesthetics.
 - **FastAPI Backend**: A highly concurrent, well-structured Python backend.
