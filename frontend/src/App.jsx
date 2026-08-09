@@ -81,29 +81,40 @@ function App() {
 
         {error && (
           <div className="error-message">
-            ⚠️ {error}
+            <h3>✕ Document processing failed</h3>
+            <p>Unable to organize the document.</p>
+            <p className="error-details">{error}</p>
           </div>
         )}
 
         {result && (
           <div className="result-card">
-            <h3>Categorization Complete</h3>
+            <h3>✓ Document Organized</h3>
+            
+            <div className="result-filename">
+              📄 {result.filename}
+            </div>
+
             <div className="result-details">
               <div className="result-item">
-                <span className="label">Category:</span>
+                <span className="label">Category</span>
                 <span className="value category-badge">{result.category}</span>
               </div>
               <div className="result-item">
-                <span className="label">Confidence:</span>
+                <span className="label">Confidence</span>
                 <span className="value">{(result.confidence * 100).toFixed(0)}%</span>
               </div>
               <div className="result-item">
-                <span className="label">Method:</span>
-                <span className="value">{result.classification_method === 'ai' ? 'AI' : 'Keyword fallback'}</span>
+                <span className="label">Method</span>
+                <span className="value">{result.classification_method === 'ai' ? 'AI Classification' : 'Keyword Fallback'}</span>
               </div>
-              <div className="result-item">
-                <span className="label">Saved to:</span>
-                <span className="value path-value">{result.path}</span>
+            </div>
+
+            <div className="result-destination">
+              <div className="dest-title">📁 Organized into</div>
+              <div className="dest-row">
+                <div className="dest-category">{result.category}</div>
+                <div className="dest-path">{result.path}</div>
               </div>
             </div>
           </div>
