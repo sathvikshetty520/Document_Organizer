@@ -11,6 +11,7 @@ from services.pdf_service import extract_text_from_pdf
 from services.classifier_service import classify_document
 from services.ai_classifier_service import classify_document_ai
 from services.storage_service import save_document
+from services.search_service import add_to_index, search
 
 app = FastAPI(title="AI Document Organizer API")
 
@@ -63,6 +64,9 @@ async def upload_document(file: UploadFile = File(...)):
         # 5. Move to correct folder
         saved_path = save_document(temp_path, file.filename, category)
         
+        # 6. Add to search index
+        add_to_index(file.filename, category, saved_path, text)
+        
         return JSONResponse({
             "success": True,
             "filename": file.filename,
@@ -77,6 +81,22 @@ async def upload_document(file: UploadFile = File(...)):
         if os.path.exists(temp_path):
             os.remove(temp_path)
         raise HTTPException(status_code=500, detail=f"Failed to process document: {e}")
+
+@app.get("/api/documents/search")
+async def search_documents(q: str = "", category: str = None):
+    if not q or not q.strip():
+        return JSONResponse({"success": True, "query": q, "results": []})
+        
+    try:
+        results = search(query=q, category=category)
+        return JSONResponse({
+            "success": True,
+            "query": q,
+            "results": results
+        })
+    except Exception as e:
+        logging.error(f"Search error: {e}")
+        raise HTTPException(status_code=500, detail="Search failed")
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

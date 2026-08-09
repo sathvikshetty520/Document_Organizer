@@ -7,6 +7,11 @@ function App() {
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
 
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchResults, setSearchResults] = useState(null);
+  const [searchError, setSearchError] = useState(null);
+
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files.length > 0) {
       setFile(e.target.files[0]);
@@ -41,6 +46,28 @@ function App() {
       setError(err.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    if (!searchQuery.trim()) return;
+
+    setIsSearching(true);
+    setSearchError(null);
+    setSearchResults(null);
+
+    try {
+      const response = await fetch(`http://localhost:8000/api/documents/search?q=${encodeURIComponent(searchQuery)}`);
+      if (!response.ok) {
+        throw new Error("Search failed");
+      }
+      const data = await response.json();
+      setSearchResults(data.results);
+    } catch (err) {
+      setSearchError("Unable to search documents. Please try again.");
+    } finally {
+      setIsSearching(false);
     }
   };
 
@@ -120,6 +147,62 @@ function App() {
           </div>
         )}
       </div>
+
+      <div className="glass-card search-card">
+        <div className="header">
+          <h2>🔎 Search Your Documents</h2>
+        </div>
+        
+        <form className="search-form" onSubmit={handleSearch}>
+          <input 
+            type="text" 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="e.g. bank statements"
+            className="search-input"
+          />
+          <button type="submit" className="search-btn" disabled={isSearching || !searchQuery.trim()}>
+            {isSearching ? 'Searching...' : 'Search'}
+          </button>
+        </form>
+
+        {searchError && (
+          <div className="error-message">
+            ⚠️ {searchError}
+          </div>
+        )}
+
+        {searchResults && (
+          <div className="search-results">
+            <h3>Search Results</h3>
+            {searchResults.length === 0 ? (
+              <p className="no-results">No matching documents found.</p>
+            ) : (
+              <div className="results-list">
+                {searchResults.map((doc, idx) => (
+                  <div key={idx} className="result-card search-result-item">
+                    <div className="result-filename">📄 {doc.filename}</div>
+                    <div className="result-details">
+                      <div className="result-item">
+                        <span className="label">Category</span>
+                        <span className="value category-badge">{doc.category}</span>
+                      </div>
+                      <div className="result-item">
+                        <span className="label">Match</span>
+                        <span className="value">{(doc.score * 100).toFixed(0)}%</span>
+                      </div>
+                    </div>
+                    <div className="result-destination">
+                      <div className="dest-path search-dest-path">{doc.path}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
     </div>
   );
 }
